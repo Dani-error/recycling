@@ -4,6 +4,7 @@ import { toast } from 'sonner';
 import { Toaster } from './components/ui/sonner';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from './components/ui/alert-dialog';
 import { Button } from './components/ui/button';
+import { Heart } from 'lucide-react';
 
 // Item type interface
 interface Item {
@@ -23,14 +24,24 @@ const items: Item[] = [
   { id: 8, type: 'plastic', image: '/plastic-box.png' }
 ];
 
+const maxHealth = 3
+
 function App() {
 
+  const [health, setHealth] = useState(maxHealth)
   const [currentItems, setCurrentItems] = useState<Item[]>(items)
   const [score, setScore] = useState<number>(0);
   const [draggedItem, setDraggedItem] = useState<Item | null>(null);
   const [wonDialog, setWonDialog] = useState(false)
 
   const won = useMemo(() => score == items.length, [score])
+
+  useEffect(() => {
+    if (health == 0) {
+      toast("You lost!")
+      restart()
+    }
+  }, [health])
 
   // Function to handle when item starts being dragged
   const handleDragStart = (item: Item) => {
@@ -51,7 +62,10 @@ function App() {
       setCurrentItems((prev) => (prev.filter(item => item.id != draggedItem.id)))
       toast('Good job! Correct recycling!');
     } else {
-      toast('Oops! Try again.');
+      if (health - 1 != 0) {
+        toast('Oops! Try again.');
+      }
+      setHealth((prev) => (prev - 1))
     }
     setDraggedItem(null); // Reset dragged item
   };
@@ -62,6 +76,7 @@ function App() {
   };
 
   const restart = () => {
+    setHealth(maxHealth)
     setScore(0)
     setCurrentItems(items)
   }
@@ -124,8 +139,12 @@ function App() {
           ))}
         </div>
 
-        <div className="score">
-          <h3>Score: {score}</h3>
+        <div className="score fixed left-[50%] -translate-x-1/2 bottom-10 flex flex-col gap-2">
+          <div className='flex gap-2 items-center justify-center'>
+            { Array.from(Array(health)).map(() =>  <Heart fill="red" stroke='none' size={28} /> ) }
+            { Array.from(Array(maxHealth - health)).map(() =>  <Heart fill="gray" stroke='none' size={28} /> ) }
+          </div>
+          <h3 className='text-center'>Score: {score}</h3>
         </div>
       </div>
     </>
