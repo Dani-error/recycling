@@ -152,7 +152,11 @@ function GameUI({ state, difficulty, setState, bins, changeSettings }: GameUIPro
       </div>
 
       <div className="fixed bottom-4 right-4">
-        <Button size="icon" variant="ghost" onClick={() => setSettingsDialog(true)}><Cog size={18} /></Button>
+        <Button size="icon" variant="ghost" onClick={() => {
+          if (!won && !lost)
+            setSettingsDialog(true)
+          else changeSettings()
+        }}><Cog size={18} /></Button>
       </div>
     </DndContext>
   );
