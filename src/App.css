@@ -5,12 +5,10 @@
 }
 
 body {
-  font-family: Arial, sans-serif;
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-color: #f0f0f0;
 }
 
 .game-container {
@@ -39,9 +37,9 @@ body {
   gap: 10px;
   align-items: center;
   justify-content: center;
-  position: absolute;
-  bottom: 213px;
-  left: -90px;
+  position: fixed;
+  bottom: 10px;
+  left: 10px;
   background-color: #ffcc00;
   padding: 10px;
   border-radius: 8px;
@@ -58,6 +56,7 @@ body {
 .bins {
   display: flex;
   justify-content: space-around;
+  gap: 20px;
   width: 100%;
   margin-bottom: 50px;
 }
@@ -65,7 +64,6 @@ body {
 .bin {
   width: 100px;
   height: 150px;
-  background-color: #4CAF50;
   display: flex;
   justify-content: center;
   align-items: center;
