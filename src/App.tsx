@@ -1,154 +1,64 @@
-import { useEffect, useMemo, useState } from 'react'
-import './App.css'
-import { toast } from 'sonner';
-import { Toaster } from './components/ui/sonner';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from './components/ui/alert-dialog';
-import { Button } from './components/ui/button';
-import { Heart } from 'lucide-react';
-
-// Item type interface
-interface Item {
-  id: number;
-  type: string;
-  image: string;
-}
-
-const items: Item[] = [
-  { id: 1, type: 'plastic', image: './plastic-bottle.png' },
-  { id: 2, type: 'plastic', image: '/plastic-bag.png' },
-  { id: 3, type: 'plastic', image: '/plastic-cup.png' },
-  { id: 4, type: 'glass', image: '/glass-bottle.png' },
-  { id: 5, type: 'glass', image: '/glass-jar.png' },
-  { id: 6, type: 'plastic', image: '/plastic-tube.png' },
-  { id: 7, type: 'glass', image: '/glass-cup.png' },
-  { id: 8, type: 'plastic', image: '/plastic-box.png' }
-];
-
-const maxHealth = 3
+import { useEffect, useMemo, useState } from "react";
+import GameUI from "./GameUI";
+import { shuffle } from "./lib/utils";
+import { bins, difficulties, items } from "./consts";
+import { Button } from "./components/ui/button";
+import { Difficulty, GameState } from "./typings";
+import { Recycle } from "lucide-react";
 
 function App() {
+  const [gameStarted, setGameStarted] = useState(false);
+  const [difficulty, setDifficulty] = useState<Difficulty>(difficulties[0])
+  const [state, setState] = useState<GameState>({
+    playing: false,
+    health: 0,
+    score: 0,
+    timeLeft: 0,
+    items: [],
+  });
 
-  const [health, setHealth] = useState(maxHealth)
-  const [currentItems, setCurrentItems] = useState<Item[]>(items)
-  const [score, setScore] = useState<number>(0);
-  const [draggedItem, setDraggedItem] = useState<Item | null>(null);
-  const [wonDialog, setWonDialog] = useState(false)
-
-  const won = useMemo(() => score == items.length, [score])
-
-  useEffect(() => {
-    if (health == 0) {
-      toast("You lost!")
-      restart()
-    }
-  }, [health])
-
-  // Function to handle when item starts being dragged
-  const handleDragStart = (item: Item) => {
-    setDraggedItem(item);
-  };
+  const won = useMemo(() => state.score >= items.length, [state.score]);
+  const lost = useMemo(() => state.health === 0 || state.timeLeft <= 0, [state.health, state.timeLeft]);
 
   useEffect(() => {
-    if (currentItems.length == 0) {
-      setWonDialog(true)
-    }
-  }, [currentItems])
+    if (!gameStarted) return;
+    const timer = setInterval(() => {
+      if (!lost && !won) setState((s) => ({ ...s, timeLeft: s.timeLeft - 1 }));
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [lost, won, gameStarted]);
 
-  // Function to handle drop into the bins
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>, binType: string) => {
-    e.preventDefault();
-    if (draggedItem && draggedItem.type === binType) {
-      setScore(score + 1);
-      setCurrentItems((prev) => (prev.filter(item => item.id != draggedItem.id)))
-      toast('Good job! Correct recycling!');
-    } else {
-      if (health - 1 != 0) {
-        toast('Oops! Try again.');
-      }
-      setHealth((prev) => (prev - 1))
-    }
-    setDraggedItem(null); // Reset dragged item
+  const startGame = (diff: Difficulty) => {
+    setDifficulty(diff)
+    setState({
+      playing: true,
+      health: diff.maxHealth,
+      score: 0,
+      timeLeft: diff.maxTime,
+      items: shuffle([...items]),
+    });
+    setGameStarted(true);
   };
 
-  // Allow dropping on the bins
-  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-  };
+  const changeSettings = () => setGameStarted(false)
 
-  const restart = () => {
-    setHealth(maxHealth)
-    setScore(0)
-    setCurrentItems(items)
-  }
-
-  return (
-    <>
-      <Toaster />
-      <AlertDialog open={wonDialog} onOpenChange={setWonDialog}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>You won!</AlertDialogTitle>
-            <AlertDialogDescription>
-              You passed the game! Would you like to start a new game?
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>No</AlertDialogCancel>
-            <AlertDialogAction onClick={restart}>Yes</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-
-      <div className="game-container">
-        <div className="background"></div>
-        <div className="character">
-          <img src="./character.png" alt="Character" />
-          <p>{ won ? "I think you should play again! You're good at this." : "Hello, let's recycle the plastics!"}</p>
-          { won && <Button variant={"secondary"} onClick={restart}>Play again</Button>}
-        </div>
-
-        <div className="bins">
-          <div
-            className="bin bg-yellow-600 flex flex-col"
-            onDragOver={handleDragOver}
-            onDrop={(e) => handleDrop(e, 'plastic')}
-          >
-            <img src="plastic-bin.png" alt={"Plastic Bin"} />
-            Plastic
-          </div>
-          <div
-            className="bin bg-green-600 flex flex-col"
-            onDragOver={handleDragOver}
-            onDrop={(e) => handleDrop(e, 'glass')}
-          >
-            <img src="glass-bin.png" alt={"Glass Bin"} />
-            Glass
-          </div>
-        </div>
-
-        <div className="items">
-          {currentItems.map((item) => (
-            <div
-              key={item.id}
-              className="item"
-              draggable
-              onDragStart={() => handleDragStart(item)}
-            >
-              <img src={item.image} alt={item.type} />
-            </div>
+  if (!gameStarted) {
+    return (
+      <div className="flex flex-col items-center justify-center h-svh gap-4">
+        <Recycle size={120} />
+        <h1 className="text-3xl font-bold">Recycling Game</h1>
+        <p>Select Difficulty:</p>
+        <div className="flex gap-4">
+          {difficulties.map((diff) => (
+            <Button key={diff.name} onClick={() => startGame(diff)}>{diff.name}</Button>
           ))}
         </div>
-
-        <div className="score fixed left-[50%] -translate-x-1/2 bottom-10 flex flex-col gap-2">
-          <div className='flex gap-2 items-center justify-center'>
-            { Array.from(Array(health)).map(() =>  <Heart fill="red" stroke='none' size={28} /> ) }
-            { Array.from(Array(maxHealth - health)).map(() =>  <Heart fill="gray" stroke='none' size={28} /> ) }
-          </div>
-          <h3 className='text-center'>Score: {score}</h3>
-        </div>
+        <Button variant={"link"} className="text-muted-foreground text-sm absolute bottom-10" asChild><a target="_blank" href="https://github.com/Dani-error">@dani-error</a></Button>
       </div>
-    </>
-  )
+    );
+  }
+
+  return <GameUI difficulty={difficulty} setState={setState} state={state} bins={bins} changeSettings={changeSettings} />;
 }
 
-export default App
+export default App;
