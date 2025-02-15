@@ -10,7 +10,7 @@ export function DroppableBin({ bin }: { bin: Bin }) {
     return (
       <div
         ref={setNodeRef}
-        className={`flex flex-col justify-self-center items-center justify-evenly py-5 ${color} w-24 h-40 rounded-xl text-white font-bold text-lg cursor-pointer`}
+        className={`flex flex-col justify-self-center items-center justify-evenly py-5 ${color} w-24 h-40 rounded-3xl text-white font-bold text-lg cursor-pointer`}
       >
         <img src={bin.image} alt={`${bin.displayName} Bin`} className="w-2/3 h-auto" />
         {bin.displayName}

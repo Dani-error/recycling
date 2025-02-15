@@ -116,8 +116,8 @@ function GameUI({ state, difficulty, setState, bins, changeSettings }: GameUIPro
       </AlertDialog>
 
 
-      <div className="fixed z-[1] top-10 md:top-[unset] md:bottom-10 left-4 right-4 md:left-10 flex flex-row items-center justify-between md:justify-center bg-yellow-500 p-3 md:p-4 rounded-lg shadow-lg md:flex-col md:w-48 gap-2">
-        <img src="./character.png" alt="Character" className="w-16 h-16 md:w-3/4 md:h-3/4" />
+      <div className="fixed z-[1] top-10 md:top-[unset] md:bottom-10 left-4 right-4 md:left-10 flex flex-row items-center justify-between md:justify-center bg-yellow-500 p-3 md:p-4 rounded-3xl shadow-lg md:flex-col md:w-48 gap-2">
+        <img src={`./character/character-${lost ? "angry" : "good"}.png`} alt="Character" className="w-16 h-16 md:w-3/4 md:h-3/4" />
         <p className="text-center font-bold text-gray-800">{getMessage()}</p>
         {!state.playing && <Button variant="secondary" onClick={restart}>Play again</Button>}
       </div>

@@ -11,7 +11,7 @@ export function DraggableItem({ item }: { item: Item }) {
       ref={setNodeRef}
       {...listeners}
       {...attributes}
-      className="touch-none flex justify-center items-center w-24 h-24 bg-red-500 rounded-lg cursor-pointer"
+      className="touch-none flex justify-center items-center w-24 h-24 bg-red-500 rounded-3xl cursor-pointer"
       style={{ transform: transform ? `translate(${transform.x}px, ${transform.y}px)` : undefined }}
     >
       <img src={item.image} alt={item.type} className="w-auto h-4/5" />
