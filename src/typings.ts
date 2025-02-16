@@ -23,4 +23,5 @@ export interface Difficulty {
     name: string
     maxHealth: number
     maxTime: number
+    maxItems: number
 }

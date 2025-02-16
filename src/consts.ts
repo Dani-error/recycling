@@ -19,7 +19,7 @@ export const bins: Bin[] = [
 ]
 
 export const difficulties: Difficulty[] = [
-    { name: "Easy", maxHealth: 3, maxTime: 30 },
-    { name: "Medium", maxHealth: 2, maxTime: 20},
-    { name: "Hard", maxHealth: 1, maxTime: 15 }
+    { name: "Easy", maxHealth: 3, maxTime: 30, maxItems: 9 },
+    { name: "Medium", maxHealth: 2, maxTime: 20, maxItems: 9 },
+    { name: "Hard", maxHealth: 1, maxTime: 15, maxItems: 9 }
 ]
