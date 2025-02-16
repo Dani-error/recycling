@@ -5,6 +5,7 @@ import { bins, difficulties, items } from "./consts";
 import { Button } from "./components/ui/button";
 import { Difficulty, GameState } from "./typings";
 import { Recycle } from "lucide-react";
+import usePrefersDarkMode from "./hooks/usePrefersDarkMode";
 
 function App() {
   const [gameStarted, setGameStarted] = useState(false);
@@ -39,6 +40,19 @@ function App() {
     });
     setGameStarted(true);
   };
+
+  const prefersDark = usePrefersDarkMode();
+
+  useEffect(() => {
+    const mode = prefersDark ? "dark" : "light"
+
+    if (mode === "dark") {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [prefersDark]);
+
 
   const changeSettings = () => setGameStarted(false)
 

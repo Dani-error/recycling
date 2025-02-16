@@ -50,7 +50,10 @@ function GameUI({ state, difficulty, setState, bins, changeSettings }: GameUIPro
     }
   }, [state.items]);
 
-  const restart = () => setState({ playing: true, health: difficulty.maxHealth, score: 0, timeLeft: difficulty.maxTime, items: shuffle([...items]) });
+  const restart = () => {
+    setDialog(null)
+    setState({ playing: true, health: difficulty.maxHealth, score: 0, timeLeft: difficulty.maxTime, items: shuffle([...items]) })
+  };
 
   const handleDragEnd = ({ active, over }: any) => {
     if (!over || !active || lost || won) return;
@@ -143,7 +146,7 @@ function GameUI({ state, difficulty, setState, bins, changeSettings }: GameUIPro
               key={i}
               {...(i === state.health ? shakeAnimation : {})} // Solo anima el último corazón perdido
             >
-              <Icon fill={i < state.health ? "red" : "gray"} stroke="white" size={30} />
+              <Icon fill={i < state.health ? "red" : "gray"} className="stroke-background" size={30} />
             </motion.div>);
           })}
         </div>
