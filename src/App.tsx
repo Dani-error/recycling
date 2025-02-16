@@ -43,6 +43,7 @@ function App() {
       timeLeft: diff.maxTime,
       items: shuffle([...items], diff.maxItems),
     });
+    setCustomDifficultyOpen(false)
     setGameStarted(true);
   };
 
