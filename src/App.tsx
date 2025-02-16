@@ -125,7 +125,7 @@ function App() {
             </div>
             <Button variant={"outline"} onClick={() => setCustomDifficultyOpen(true)}>Custom</Button>
           </div>
-          <Button variant={"link"} className="text-muted-foreground text-sm absolute bottom-10" asChild><a target="_blank" href="https://github.com/Dani-error">@dani-error</a></Button>
+          <Button variant={"link"} className="text-muted-foreground text-sm absolute bottom-10" asChild><a target="_blank" href="https://github.com/Dani-error/recycling">@dani-error</a></Button>
         </div>
       </>
     );
