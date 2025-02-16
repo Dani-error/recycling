@@ -46,7 +46,7 @@ function GameUI({ state, difficulty, setState, bins, changeSettings }: GameUIPro
       health: difficulty.maxHealth,
       score: 0,
       timeLeft: difficulty.maxTime,
-      items: shuffle([...items]),
+      items: shuffle([...items], difficulty.maxItems),
     })
   }
 
